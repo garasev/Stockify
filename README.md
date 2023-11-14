@@ -42,3 +42,6 @@
 - **unemployment.csv** - Уровень безработицы в США, %, ежемесячные данные
 
 - **README.md**
+
+- https://docs.google.com/document/d/1xMy0_Ojo2QbLkeC4OIydL_A7GHC9rNuDJlL2TCT9dSk/edit
+  
