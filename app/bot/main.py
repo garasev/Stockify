@@ -12,7 +12,7 @@ from aiogram.utils.markdown import hbold
 import utils
 
 TOKEN = getenv("BOT_TOKEN")
-TOKEN = "6836596829:AAH5Yg2KzsgTW0lkglkBEe929a0UqIP34q8"
+TOKEN = "token"
 dp = Dispatcher()
 
 CACHE = {
