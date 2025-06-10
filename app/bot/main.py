@@ -12,7 +12,7 @@ from aiogram.utils.markdown import hbold
 import utils
 
 TOKEN = getenv("BOT_TOKEN")
-TOKEN = "token"
+TOKEN= "6836596829:AAH5Yg2KzsgTW0lkglkBEe929a0UqIP34q8"
 dp = Dispatcher()
 
 CACHE = {
@@ -31,7 +31,7 @@ async def command_start_handler(message: Message) -> None:
     await message.answer(utils.START_MSG)
 
 
-@dp.message(Command(commands="getCache"))
+@dp.message(Command(commands=['getCache']))
 async def get_cache_handler(message: types.Message) -> None:
     try:
         await message.answer(str(CACHE))
@@ -40,7 +40,7 @@ async def get_cache_handler(message: types.Message) -> None:
 
 
 @dp.message(Command(commands="graph"))
-async def get_cache_handler(message: types.Message) -> None:
+async def get_graph_handler(message: types.Message) -> None:
     try:
         name = utils.picture_from_graph(TARGET)
         photo = FSInputFile(name)
@@ -48,29 +48,47 @@ async def get_cache_handler(message: types.Message) -> None:
     except TypeError:
         await message.answer(ERROR_MSG)
 
+@dp.message(Command(commands="forecastGraph"))
+async def get_fgraph_handler(message: types.Message) -> None:
+    try:
+        name = utils.forecast_graph(TARGET)
+        photo = FSInputFile(name)
+        await message.answer_photo(photo, caption=TARGET)
+    except TypeError:
+        await message.answer(ERROR_MSG)
+
+@dp.message(Command(commands="target"))
+async def get_target_handler(message: types.Message):
+    global TARGET
+    await message.answer(NEW_SET_MSG + TARGET)
 
 @dp.message(Command(commands="JPM"))
 async def set_jpm_handler(message: types.Message):
+    global TARGET
     TARGET = WHITELIST[0]
     await message.answer(NEW_SET_MSG + TARGET)
 
 @dp.message(Command(commands="WFC"))
 async def set_wfc_handler(message: types.Message):
+    global TARGET
     TARGET = WHITELIST[1]
     await message.answer(NEW_SET_MSG + TARGET)
 
 @dp.message(Command(commands="Citi"))
 async def set_citi_handler(message: types.Message):
+    global TARGET
     TARGET = WHITELIST[2]
     await message.answer(NEW_SET_MSG + TARGET)
 
 @dp.message(Command(commands="BAC"))
 async def set_bac_handler(message: types.Message):
+    global TARGET
     TARGET = WHITELIST[3]
     await message.answer(NEW_SET_MSG + TARGET)
 
 @dp.message(Command(commands="forecast"))
 async def get_handler(message: types.Message):
+    global CACHE, TARGET
     if not TARGET in CACHE:
         CACHE[TARGET] = TARGET + "\n" + utils.dict_to_str(utils.get_all_forecast(TARGET))
     
@@ -78,6 +96,7 @@ async def get_handler(message: types.Message):
 
 @dp.message(Command(commands="clearCache"))
 async def get_cache_handler(message: types.Message) -> None:
+    global CACHE
     CACHE = {}
     try:
         await message.answer(str(CACHE))
@@ -85,7 +104,8 @@ async def get_cache_handler(message: types.Message) -> None:
         await message.answer(ERROR_MSG)
 
 async def main() -> None:
-    bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
+    bot = Bot(TOKEN)
+    
     await dp.start_polling(bot)
 
 

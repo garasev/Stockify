@@ -1,5 +1,5 @@
 import pandas as pd
-from etna.models import NaiveModel, AutoARIMAModel, ProphetModel, CatBoostMultiSegmentModel
+from etna.models import NaiveModel, AutoARIMAModel, CatBoostMultiSegmentModel
 from etna.datasets import TSDataset
 from etna.pipeline import Pipeline
 from etna.metrics import SMAPE, MAE, MAPE
@@ -10,18 +10,11 @@ from copy import deepcopy
 from etna.transforms import (TimeSeriesImputerTransform,
                              DensityOutliersTransform,
                              MedianOutliersTransform)
-from etna.analysis.outliers import (get_anomalies_density,
-                                    get_anomalies_median,
-                                    get_anomalies_prediction_interval)
 from etna.analysis import (plot_anomalies, plot_anomalies_interactive,
                            plot_backtest, plot_forecast)
-from etna.models import ProphetModel
-from tsfresh import extract_features
-from tsfresh.feature_extraction import ComprehensiveFCParameters, MinimalFCParameters
 from etna.datasets import TSDataset
 
 HORIZON = 30
-EXTRACTION_SETTINGS = MinimalFCParameters()
 
 def _read_csv(file_name):
     df = pd.read_csv(file_name)
@@ -158,6 +151,7 @@ def catboost(ts):
     return forecast_ts
 
 def catboost_train(ts):
+    train_ts, test_ts = ts.train_test_split(test_size=HORIZON)
     catboost_model = CatBoostMultiSegmentModel(iterations = 750, depth = 5, learning_rate = 0.001)
     
     stl = STLTransform(in_column="target", period=30, model="arima")
@@ -236,5 +230,5 @@ def prophet(ts):
 
 
 if __name__ == "__main__":
-    ts = create_ts('union.csv')
+    ts = create_ts('combined_dataset.csv')
     forecast = catboost_train(ts)

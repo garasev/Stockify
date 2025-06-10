@@ -9,14 +9,21 @@ df = pd.read_csv("union.csv")
 forecast_df = pd.read_csv("last_forecast.csv")
 
 START_MSG = """
-Домашняя работа #2. Авторство: Гарасев Никита Алексеевич и Тишин Роман Вячеславович.
+Командный проект по ML. Авторство: Гарасев Никита Алексеевич и Тишин Роман Вячеславович.
+
+Бот создан для предсказания стоимостей акций JPM WFC C BAC
+
 Доступные команды:
 
 /JPM, /WFC, /Citi, /BAC - для установки банка, как таргет для команд.
 
+/target -узнать текущий таргет.
+
 /graph - строит STL разложение для таргета.
 
 /forecast - выводит предсказания на месяц для таргета. 
+
+/forecastGraph - строит график предсказаний на месяц для таргета.
 
 /getCache - вывод кеш приложения. 
 
@@ -24,7 +31,6 @@ START_MSG = """
 """
 
 def decompose(target):
-
     wfc_close_series = df[target]
     decomposition = seasonal_decompose(wfc_close_series, model='additive', period=60)
 
@@ -61,6 +67,19 @@ def get_forecast(date):
     row = forecast_df.loc[forecast_df['date'] == date].iloc[0].to_dict()
     return row
 
+def forecast_graph(target):
+    plt = _forecast_graph(target)
+    plt.savefig("last_pic2.jpg", format='jpg')
+    return "last_pic2.jpg"
+
+def _forecast_graph(target):
+    plt.figure(figsize=(10, 5))
+    plt.plot(forecast_df.index, forecast_df[target + CLOSE_NAME], marker='o')
+    plt.title(f'График для {target}')
+    plt.xlabel('Дата')
+    plt.ylabel('Цена закрытия')
+    plt.grid(True)
+    return plt
 
 def get_all_forecast(target):
     dates = forecast_df["date"].tolist()
